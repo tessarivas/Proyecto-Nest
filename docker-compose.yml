@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  pokemonBack:
+    build: ./
+    ports:
+      - "3000:3000"
+    networks:
+      - pokemon-network
+    depends_on:
+      - bdPokemon
+    restart: unless-stopped
+  bdPokemon:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: pokemon
+    ports:
+      - "5432:5432"
+    volumes:
+      - bd:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - bdPokemon
+    environment:
+      DATABASE_URL: "postgresql://root:123@bdPokemon:5432/pokemon"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+volumes:
+  bd:
+    driver: local
+networks:
+  pokemon-network:
+    driver: bridge
