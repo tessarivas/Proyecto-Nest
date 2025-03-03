@@ -19,6 +19,7 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  oculto    Boolean  @default(false)
   /*
   activo    Boolean  @default(true)
   oculto    Boolean  @default(false)
