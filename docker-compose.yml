@@ -19,6 +19,8 @@ services:
       - "5432:5432"
     volumes:
       - bd:/var/lib/postgresql/data
+    networks:
+      - pokemon-network
     restart: unless-stopped
 
   app:
