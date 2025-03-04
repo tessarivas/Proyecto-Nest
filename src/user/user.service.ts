@@ -1,16 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
   constructor(private prismaService: PrismaService) {}
 
-  create(createUserDto: CreateUserDto) {
-    return this.prismaService.user.create({
-      data: createUserDto,
+  async create(createUserDto: CreateUserDto) {
+    const emailExists = await this.prismaService.user.findUnique({
+      where: { email: createUserDto.email },
     });
+    if (emailExists) {
+      return await this.prismaService.user.create({
+        data: createUserDto,
+      });
+    } else {
+      this.logger.error('Email ya existe');
+      return "Email ya existe";
+    }
   }
 
   findAll() {
