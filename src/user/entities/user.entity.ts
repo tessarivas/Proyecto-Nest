@@ -1,7 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsDate, IsEmail, IsInt, IsPositive, IsString, IsStrongPassword } from "class-validator";
 
-export class User {
+interface Modelo {}
+
+export class User implements Modelo {
     @ApiProperty({
         description: 'Identificador del usuario',
         example: 1,
