@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -13,13 +13,12 @@ export class UserService {
       where: { email: createUserDto.email },
     });
     if (emailExists) {
-      return await this.prismaService.user.create({
-        data: createUserDto,
-      });
-    } else {
-      this.logger.error('Email ya existe');
-      return "Email ya existe";
-    }
+      this.logger.error(`Email ${createUserDto.email} ya existe`);
+      throw new ConflictException('Email ya existe');
+    } 
+    return await this.prismaService.user.create({
+      data: createUserDto,
+    });
   }
 
   findAll() {
