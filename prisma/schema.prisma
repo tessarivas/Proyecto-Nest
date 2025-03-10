@@ -15,15 +15,31 @@ datasource db {
 }
 
 model User {
-  id        Int   @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())  // Se mantiene igual
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   oculto    Boolean  @default(false)
-  /*
-  activo    Boolean  @default(true)
-  oculto    Boolean  @default(false)
-  pokemons  Pokemon[]
-  */
+
+  // Relación con UserPokemon (favoritos)
+  userPokemons UserPokemon[]
+}
+
+model Pokemon {
+  id   Int    @id @default(autoincrement())  // Si usas IDs numéricos en la API
+  name String
+  // Otros campos de Pokémon
+  userPokemons UserPokemon[]
+}
+
+model UserPokemon {
+  id        Int     @id @default(autoincrement()) // ID de la relación
+  userId    Int     // Relaciona con User.id
+  pokemonId Int     // Relaciona con Pokemon.id
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pokemon   Pokemon @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }
